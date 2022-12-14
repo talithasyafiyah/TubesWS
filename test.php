@@ -13,29 +13,24 @@
     $sparql_jena = new \EasyRdf\Sparql\Client('http://localhost:3030/civic/sparql');
 
     $sparql_query = '
-    SELECT ?m ?name ?manufacturer ?abstract
-    WHERE {?m foaf:name ?name;
+    SELECT DISTINCT ?name ?comment ?manufacturer ?designer ?fProduction ?assembly
+    WHERE {?m rdfs:label ?name;
+              rdfs:comment ?comment;
               dbo:manufacturer ?manufacturer;
-              dbo:abstract ?abstract. }';
+              dbp:designer ?designer;
+              dbo:productionStartYear ?fProduction;
+              dbp:assembly ?assembly. }';
+
+    $sparql_query1 = '
+    SELECT DISTINCT ?abstract
+    WHERE {?m dbo:abstract ?abstract. }';
 
     // $sparql_query1 = '
     // SELECT ?m ?abstract
     // WHERE {?m dbo:abstract ?abstract.}';
     
     $result = $sparql_jena->query($sparql_query);
-    // $result1 = $sparql_jena->query($sparql_query1);
-
-    foreach ($result as $row) {
-        echo $row->name;
-        echo '<br>';
-        echo $row->manufacturer;
-        echo '<br>';
-        echo $row->abstract;
-    }
-
-    // foreach ($result1 as $row1) {
-    //     echo $row1->abstract;
-    // }
+    $result1 = $sparql_jena->query($sparql_query1);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,6 +75,45 @@
     </script>
 </head>
 <body>
+      <div>
+        <?php
+
+        foreach ($result as $row) {
+            echo $row->name;
+            echo '<br>';
+            echo '<br>';
+            echo $row->comment;
+        
+        ?>
+
+        <?php
+          foreach ($result1 as $row1) {
+            echo $row1->abstract;
+          }
+        ?>
+        <table>
+          <tr>
+            <td>Designer</td>
+            <td>:</td>
+            <td><?= $row->designer; ?></td>
+          </tr>
+          <tr>
+            <td>First Production</td>
+            <td>:</td>
+            <td><?= $row->fProduction; ?></td>
+          </tr>
+          <tr>
+            <td>Manufacturer</td>
+            <td>:</td>
+            <td><?= $row->manufacturer; ?></td>
+          </tr>
+          <tr>
+            <td>Assembly</td>
+            <td>:</td>
+            <td><?= $row->assembly; }?></td>
+          </tr>
+        </table>
+      </div>
     <div id="top_x_div" style="width: 900px; height: 500px;"></div>
 </body>
 </html>

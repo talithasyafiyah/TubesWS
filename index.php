@@ -1,4 +1,6 @@
 <?php
+
+use EasyRdf\RdfNamespace;
     require 'vendor/autoload.php';
 
     \EasyRdf\RdfNamespace::set('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
@@ -13,12 +15,21 @@
     $sparql_jena = new \EasyRdf\Sparql\Client('http://localhost:3030/civic/sparql');
 
     $sparql_query = '
-    SELECT ?m ?name ?manufacturer ?abstract
-    WHERE {?m foaf:name ?name;
+    SELECT DISTINCT ?label ?comment ?name ?manufacturer ?designer ?fProduction ?assembly
+    WHERE {?m rdfs:label ?label;
+              rdfs:comment ?comment;
+              foaf:name ?name;
               dbo:manufacturer ?manufacturer;
-              dbo:abstract ?abstract. }';
+              dbp:designer ?designer;
+              dbo:productionStartYear ?fProduction;
+              dbp:assembly ?assembly. }';
+
+    // $sparql_query1 = '
+    // SELECT ?m ?abstract
+    // WHERE {?m dbo:abstract ?abstract. }';
     
     $result = $sparql_jena->query($sparql_query);
+    // $result1 = $sparql_jena->query($sparql_query1);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,39 +48,39 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['bar']});
-      google.charts.setOnLoadCallback(drawStuff);
+        <script type="text/javascript">
+        google.charts.load('current', {'packages':['bar']});
+        google.charts.setOnLoadCallback(drawStuff);
 
-      function drawStuff() {
-        var data = new google.visualization.arrayToDataTable([
-          ['Opening Move', 'Percentage'],
-          ["King's pawn (e4)", 44],
-          ["Queen's pawn (d4)", 31],
-          ["Knight to King 3 (Nf3)", 12],
-          ["Queen's bishop pawn (c4)", 10],
-          ['Other', 3]
-        ]);
+        function drawStuff() {
+            var data = new google.visualization.arrayToDataTable([
+            ['Opening Move', 'Percentage'],
+            ["King's pawn (e4)", 44],
+            ["Queen's pawn (d4)", 31],
+            ["Knight to King 3 (Nf3)", 12],
+            ["Queen's bishop pawn (c4)", 10],
+            ['Other', 3]
+            ]);
 
-        var options = {
-          title: 'Chess opening moves',
-          width: 600,
-          legend: { position: 'none' },
-          chart: { title: 'Chess opening moves',
-                   subtitle: 'popularity by percentage' },
-          bars: 'horizontal', // Required for Material Bar Charts.
-          axes: {
-            x: {
-              0: { side: 'top', label: 'Percentage'} // Top x-axis.
-            }
-          },
-          bar: { groupWidth: "90%" }
+            var options = {
+            title: 'Chess opening moves',
+            width: 600,
+            legend: { position: 'none' },
+            chart: { title: 'Chess opening moves',
+                    subtitle: 'popularity by percentage' },
+            bars: 'horizontal', // Required for Material Bar Charts.
+            axes: {
+                x: {
+                0: { side: 'top', label: 'Percentage'} // Top x-axis.
+                }
+            },
+            bar: { groupWidth: "90%" }
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('top_x_div'));
+            chart.draw(data, options);
         };
-
-        var chart = new google.charts.Bar(document.getElementById('top_x_div'));
-        chart.draw(data, options);
-      };
-    </script>
+        </script>
     </head>
 
     <body id="page-top">
@@ -77,7 +88,12 @@
             <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
                 <div class="d-flex justify-content-center">
                     <div class="text-center">
-                        <h1 class="mx-auto my-0 text-uppercase">Civic</h1>
+                        <h1 class="mx-auto my-0 text-uppercase">
+                            <?php
+                                foreach ($result as $row) {
+                                    echo $row->label; 
+                            ?> 
+                        </h1>
                         <h2 class="text-white-50 mx-auto mt-2 mb-5">An elegant, cool, handsome car.</h2>
                         <a class="btn btn-primary" href="#about">Get Started</a>
                     </div>
@@ -90,15 +106,10 @@
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-lg-8">
                         <h2 class="text-white mb-4">
-                            <?php
-                                foreach ($result as $row) {
-                                    echo $row->name;
-                            ?>
+                            <?= $row->label; ?>
                         </h2>
                         <p class="text-white-50">
-                            <?php
-                                echo $row->abstract;
-                            } ?>
+                            <?= $row->comment; ?>
                         </p>
                     </div>
                 </div>
@@ -110,11 +121,33 @@
             <div class="container px-4 px-lg-5">
                 <!-- Open Graph Protocol -->
                 <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
-                    <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/bg-masthead.jpg" alt="..." /></div>
-                    <div class="col-xl-4 col-lg-5">
-                        <div class="featured-text text-center text-lg-left">
-                            <h4>Shoreline</h4>
-                            <p class="text-black-50 mb-0">Grayscale is open source and MIT licensed. This means you can use it for any project - even commercial projects! Download it, customize it, and publish your website!</p>
+                    <div class="col-xl-7 col-lg-6"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/bg-masthead.jpg" alt="..."/></div>
+                    <div class="col-xl-5 col-lg-6">
+                        <div class="featured-text text-lg-left">
+                            <!-- <h4>Shoreline</h4> -->
+                            <p class="text-black-50 mb-2" style="font-size: xx-large;"><?= $row->name; ?></p>
+                            <table>
+                                <tr>
+                                    <td>Designer</td>
+                                    <td>:</td>
+                                    <td><?= $row->designer; ?></td>
+                                </tr>
+                                <tr>
+                                    <td>First Production</td>
+                                    <td>:</td>
+                                    <td><?= $row->fProduction; ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Manufacturer</td>
+                                    <td>:</td>
+                                    <td><?= $row->manufacturer; ?></td>
+                                </tr>
+                                <tr>
+                                    <td>First Assembly</td>
+                                    <td>:</td>
+                                    <td><?= $row->assembly; }?></td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
