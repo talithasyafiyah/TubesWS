@@ -1,25 +1,3 @@
-<?php
-    require 'vendor/autoload.php';
-
-    \EasyRdf\RdfNamespace::set('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-    \EasyRdf\RdfNamespace::set('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
-    \EasyRdf\RdfNamespace::set('owl', 'http://www.w3.org/2002/07/owl#');
-    \EasyRdf\RdfNamespace::set('dc', 'http://purl.org/dc/terms/');
-    \EasyRdf\RdfNamespace::set('car', 'http://example.org/schema/car');
-    \EasyRdf\RdfNamespace::set('dbo', 'http://dbpedia.org/ontology/');
-    \EasyRdf\RdfNamespace::set('dbp', 'http://dbpedia.org/property/');
-    \EasyRdf\RdfNamespace::setDefault('og');
-
-    $sparql_jena = new \EasyRdf\Sparql\Client('http://localhost:3030/civic/sparql');
-
-    $sparql_query = '
-    SELECT ?m ?name ?manufacturer ?abstract
-    WHERE {?m foaf:name ?name;
-              dbo:manufacturer ?manufacturer;
-              dbo:abstract ?abstract. }';
-    
-    $result = $sparql_jena->query($sparql_query);
-?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -36,42 +14,7 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['bar']});
-      google.charts.setOnLoadCallback(drawStuff);
-
-      function drawStuff() {
-        var data = new google.visualization.arrayToDataTable([
-          ['Opening Move', 'Percentage'],
-          ["King's pawn (e4)", 44],
-          ["Queen's pawn (d4)", 31],
-          ["Knight to King 3 (Nf3)", 12],
-          ["Queen's bishop pawn (c4)", 10],
-          ['Other', 3]
-        ]);
-
-        var options = {
-          title: 'Chess opening moves',
-          width: 600,
-          legend: { position: 'none' },
-          chart: { title: 'Chess opening moves',
-                   subtitle: 'popularity by percentage' },
-          bars: 'horizontal', // Required for Material Bar Charts.
-          axes: {
-            x: {
-              0: { side: 'top', label: 'Percentage'} // Top x-axis.
-            }
-          },
-          bar: { groupWidth: "90%" }
-        };
-
-        var chart = new google.charts.Bar(document.getElementById('top_x_div'));
-        chart.draw(data, options);
-      };
-    </script>
     </head>
-
     <body id="page-top">
         <header class="masthead">
             <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
@@ -89,16 +32,9 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-lg-8">
-                        <h2 class="text-white mb-4">
-                            <?php
-                                foreach ($result as $row) {
-                                    echo $row->name;
-                            ?>
-                        </h2>
+                        <h2 class="text-white mb-4">Civic</h2>
                         <p class="text-white-50">
-                            <?php
-                                echo $row->abstract;
-                            } ?>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam, dolor, vel tempora illum, iste expedita ad quibusdam laborum sit soluta aut dolore eveniet inventore vitae. Perferendis eaque voluptates atque libero?
                         </p>
                     </div>
                 </div>
@@ -135,9 +71,7 @@
                 </div>
                 <!-- Project Two Row-->
                 <div class="row gx-0 justify-content-center">
-                    <div class="col-lg-6">
-                        <div id="top_x_div" style="width: 600px; height: 500px;"></div>
-                    </div>
+                    <div class="col-lg-6"><img class="img-fluid" src="assets/img/demo-image-02.jpg" alt="..." /></div>
                     <div class="col-lg-6 order-lg-first">
                         <div class="bg-black text-center h-100 project">
                             <div class="d-flex h-100">
