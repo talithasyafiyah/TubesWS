@@ -20,6 +20,8 @@
 	<dbp:designer xml:lang="en">Yuki Ishii and Hitomaro Asano</dbp:designer>
 	<dbp:battery rdf:resource="https://dbpedia.org/page/Lithium-ion_battery"/>
 	<dbp:assembly xml:lang="en">Suzuka, Mie, Japan</dbp:assembly>
+	<dbp:longitude rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">35,672749568955815</dbp:longitude>
+	<dbp:latitude rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">139,7237599846288</dbp:latitude>
 	<sale:year18 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">325,760</sale:year18>
 	<sale:year19 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">325,650</sale:year19>
 	<sale:year20 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">261,225</sale:year20>
@@ -27,3 +29,6 @@
 	<sale:year22 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">119,023</sale:year22>
 </rdf:Description>
 </rdf:RDF>
+
+<!-- 35.672749568955815 -->
+<!-- 139.7237599846288 -->
