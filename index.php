@@ -10,19 +10,34 @@ use EasyRdf\RdfNamespace;
     \EasyRdf\RdfNamespace::set('car', 'http://example.org/schema/car');
     \EasyRdf\RdfNamespace::set('dbo', 'http://dbpedia.org/ontology/');
     \EasyRdf\RdfNamespace::set('dbp', 'http://dbpedia.org/property/');
+    \EasyRdf\RdfNamespace::set('sale', 'http://example.org/schema/sale');
     \EasyRdf\RdfNamespace::setDefault('og');
 
     $sparql_jena = new \EasyRdf\Sparql\Client('http://localhost:3030/civic/sparql');
 
     $sparql_query = '
-    SELECT DISTINCT ?label ?comment ?name ?manufacturer ?designer ?fProduction ?assembly
+    SELECT DISTINCT ?label ?comment ?name ?manufacturer ?designer
+    ?fProduction ?assembly ?year18 ?year19 ?year20 ?year21 ?year22
     WHERE {?m rdfs:label ?label;
               rdfs:comment ?comment;
               foaf:name ?name;
               dbo:manufacturer ?manufacturer;
               dbp:designer ?designer;
               dbo:productionStartYear ?fProduction;
-              dbp:assembly ?assembly. }';
+              dbp:assembly ?assembly;
+              sale:year18 ?year18;
+              sale:year19 ?year19;
+              sale:year20 ?year20;
+              sale:year21 ?year21;
+              sale:year22 ?year22. }';
+
+    // $sparql_query1 = '
+    // SELECT DISTINCT ?year18 ?year19 ?year20 ?year21 ?year22
+    // WHERE {?m sale:year18 ?year18;
+    //           sale:year19 ?year19;
+    //           sale:year20 ?year20;
+    //           sale:year21 ?year21;
+    //           sale:year22 ?year22. }';
 
     // $sparql_query1 = '
     // SELECT ?m ?abstract
@@ -30,6 +45,7 @@ use EasyRdf\RdfNamespace;
     
     $result = $sparql_jena->query($sparql_query);
     // $result1 = $sparql_jena->query($sparql_query1);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,26 +68,29 @@ use EasyRdf\RdfNamespace;
         google.charts.load('current', {'packages':['bar']});
         google.charts.setOnLoadCallback(drawStuff);
 
+        <?php
+            foreach ($result as $row) {
+        ?>
         function drawStuff() {
             var data = new google.visualization.arrayToDataTable([
-            ['Opening Move', 'Percentage'],
-            ["King's pawn (e4)", 44],
-            ["Queen's pawn (d4)", 31],
-            ["Knight to King 3 (Nf3)", 12],
-            ["Queen's bishop pawn (c4)", 10],
-            ['Other', 3]
+            ['Year', 'Sales'],
+            ["2018", <?= $row->year18; ?>],
+            ["2019", <?= $row->year19; ?>],
+            ["2020", <?= $row->year20; ?>],
+            ["2021", <?= $row->year21; ?>],
+            ['2022', <?= $row->year22; ?>]
             ]);
 
             var options = {
-            title: 'Chess opening moves',
-            width: 600,
+            title: 'Honda Civic Sales in US',
+            width: 500,
             legend: { position: 'none' },
-            chart: { title: 'Chess opening moves',
-                    subtitle: 'popularity by percentage' },
+            chart: { title: 'Honda Civic Sales in US',
+                    subtitle: 'by Year' },
             bars: 'horizontal', // Required for Material Bar Charts.
             axes: {
                 x: {
-                0: { side: 'top', label: 'Percentage'} // Top x-axis.
+                0: { side: 'top', label: 'Amount'} // Top x-axis.
                 }
             },
             bar: { groupWidth: "90%" }
@@ -89,10 +108,7 @@ use EasyRdf\RdfNamespace;
                 <div class="d-flex justify-content-center">
                     <div class="text-center">
                         <h1 class="mx-auto my-0 text-uppercase">
-                            <?php
-                                foreach ($result as $row) {
-                                    echo $row->label; 
-                            ?> 
+                            <?= $row->label; ?>
                         </h1>
                         <h2 class="text-white-50 mx-auto mt-2 mb-5">An elegant, cool, handsome car.</h2>
                         <a class="btn btn-primary" href="#about">Get Started</a>
@@ -135,7 +151,11 @@ use EasyRdf\RdfNamespace;
                                 <tr>
                                     <td>First Production</td>
                                     <td>:</td>
-                                    <td><?= $row->fProduction; ?></td>
+                                    <td>
+                                        <?php
+                                            $date = date_create($row->fProduction);
+                                            echo date_format($date, "d F Y"); 
+                                        ?></td>
                                 </tr>
                                 <tr>
                                     <td>Manufacturer</td>
@@ -158,8 +178,7 @@ use EasyRdf\RdfNamespace;
                         <div class="bg-black text-center h-100 project">
                             <div class="d-flex h-100">
                                 <div class="project-text w-100 my-auto text-center text-lg-left">
-                                    <h4 class="text-white">Map</h4>
-                                    <p class="mb-0 text-white-50">An example of where you can put an image of a project, or anything else, along with a description.</p>
+                                    <h6 class="text-white-50">First assembly in Suzuka, Mie, Japan.</h6>
                                     <hr class="d-none d-lg-block mb-0 ms-0" />
                                 </div>
                             </div>
@@ -169,14 +188,17 @@ use EasyRdf\RdfNamespace;
                 <!-- Project Two Row-->
                 <div class="row gx-0 justify-content-center">
                     <div class="col-lg-6">
-                        <div id="top_x_div" style="width: 600px; height: 500px;"></div>
+                        <div class="card mx-4 mt-4">
+                            <div id="top_x_div" style="width: 500px; height: 400px;"></div>
+                        </div>
                     </div>
                     <div class="col-lg-6 order-lg-first">
                         <div class="bg-black text-center h-100 project">
                             <div class="d-flex h-100">
                                 <div class="project-text w-100 my-auto text-center text-lg-right">
                                     <h4 class="text-white">Chart</h4>
-                                    <p class="mb-0 text-white-50">Another example of a project with its respective description. These sections work well responsively as well, try this theme on a small screen!</p>
+                                    <p class="mb-0 text-white-50">Honda Civic US Sales by Year</p>
+                                    <p class="mb-0 text-white-50">2018 - 2022</p>
                                     <hr class="d-none d-lg-block mb-0 me-0" />
                                 </div>
                             </div>

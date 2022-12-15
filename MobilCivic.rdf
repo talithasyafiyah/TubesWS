@@ -9,16 +9,21 @@
 	xmlns:dbo="http://dbpedia.org/ontology/"
 	xmlns:owl="http://www.w3.org/2002/07/owl#"
 	xmlns:gold="http://purl.org/linguistics/gold/"
-	xmlns:prov="http://www.w3.org/ns/prov#" >
+	xmlns:prov="http://www.w3.org/ns/prov#" 
+	xmlns:sale="http://example.org/schema/sale">
 <rdf:Description rdf:about="https://dbpedia.org/page/Honda_Civic">
 	<foaf:name xml:lang="en">Honda Civic</foaf:name>
 	<rdfs:label xml:lang="en">Civic</rdfs:label>
 	<rdfs:comment xml:lang="en">The Honda Civic (Japanese: ホンダ・シビック, Hepburn: Honda Shibikku) is a series of automobiles manufactured by Honda since 1972. Since 2000, the Civic has been categorized as a compact car, while previously it occupied the subcompact class. As of 2021, the Civic is positioned between the Honda Fit/City and Honda Accord in Honda's global car line-up. The Civic is one of the all-time best-selling automobiles in the world, with over 27 million units sold since 1972 as of 2021.</rdfs:comment>
 	<dbo:manufacturer rdf:resource="https://dbpedia.org/page/Honda"/>
-	<dbo:predecessor rdf:resource="https://dbpedia.org/page/Honda_Z"/>
 	<dbo:productionStartYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">1972-01-01</dbo:productionStartYear>
 	<dbp:designer xml:lang="en">Yuki Ishii and Hitomaro Asano</dbp:designer>
 	<dbp:battery rdf:resource="https://dbpedia.org/page/Lithium-ion_battery"/>
 	<dbp:assembly xml:lang="en">Suzuka, Mie, Japan</dbp:assembly>
+	<sale:year18 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">325,760</sale:year18>
+	<sale:year19 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">325,650</sale:year19>
+	<sale:year20 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">261,225</sale:year20>
+	<sale:year21 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">263,787</sale:year21>
+	<sale:year22 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">119,023</sale:year22>
 </rdf:Description>
 </rdf:RDF>

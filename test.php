@@ -8,29 +8,26 @@
     \EasyRdf\RdfNamespace::set('car', 'http://example.org/schema/car');
     \EasyRdf\RdfNamespace::set('dbo', 'http://dbpedia.org/ontology/');
     \EasyRdf\RdfNamespace::set('dbp', 'http://dbpedia.org/property/');
+    \EasyRdf\RdfNamespace::set('sale', 'http://example.org/schema/sale');
     \EasyRdf\RdfNamespace::setDefault('og');
 
     $sparql_jena = new \EasyRdf\Sparql\Client('http://localhost:3030/civic/sparql');
 
     $sparql_query = '
-    SELECT DISTINCT ?name ?comment ?manufacturer ?designer ?fProduction ?assembly
+    SELECT DISTINCT ?name ?comment ?manufacturer ?designer ?fProduction ?assembly ?year18
     WHERE {?m rdfs:label ?name;
               rdfs:comment ?comment;
               dbo:manufacturer ?manufacturer;
               dbp:designer ?designer;
               dbo:productionStartYear ?fProduction;
-              dbp:assembly ?assembly. }';
-
-    $sparql_query1 = '
-    SELECT DISTINCT ?abstract
-    WHERE {?m dbo:abstract ?abstract. }';
+              dbp:assembly ?assembly;
+              sale:year18 ?year18. }';
 
     // $sparql_query1 = '
     // SELECT ?m ?abstract
     // WHERE {?m dbo:abstract ?abstract.}';
     
     $result = $sparql_jena->query($sparql_query);
-    $result1 = $sparql_jena->query($sparql_query1);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -83,13 +80,6 @@
             echo '<br>';
             echo '<br>';
             echo $row->comment;
-        
-        ?>
-
-        <?php
-          foreach ($result1 as $row1) {
-            echo $row1->abstract;
-          }
         ?>
         <table>
           <tr>
@@ -110,7 +100,12 @@
           <tr>
             <td>Assembly</td>
             <td>:</td>
-            <td><?= $row->assembly; }?></td>
+            <td><?= $row->assembly; ?></td>
+          </tr>
+          <tr>
+            <<td>Sale</td>
+            <td>:</td>
+            <td><?= $row->year18; }?></td>
           </tr>
         </table>
       </div>
