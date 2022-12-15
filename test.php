@@ -10,7 +10,7 @@
     \EasyRdf\RdfNamespace::set('dbp', 'http://dbpedia.org/property/');
     \EasyRdf\RdfNamespace::set('sale', 'http://example.org/schema/sale');
     \EasyRdf\RdfNamespace::setDefault('og');
-
+    
     $sparql_jena = new \EasyRdf\Sparql\Client('http://localhost:3030/civic/sparql');
 
     $sparql_query = '
