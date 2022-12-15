@@ -1,8 +1,10 @@
 <?php
 
 use EasyRdf\RdfNamespace;
-    require 'vendor/autoload.php';
+use LDAP\Result;
 
+    require 'vendor/autoload.php';
+    //----NameSpace-------
     \EasyRdf\RdfNamespace::set('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
     \EasyRdf\RdfNamespace::set('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
     \EasyRdf\RdfNamespace::set('owl', 'http://www.w3.org/2002/07/owl#');
@@ -11,9 +13,9 @@ use EasyRdf\RdfNamespace;
     \EasyRdf\RdfNamespace::set('dbo', 'http://dbpedia.org/ontology/');
     \EasyRdf\RdfNamespace::set('dbp', 'http://dbpedia.org/property/');
     \EasyRdf\RdfNamespace::setDefault('og');
-
+    //---------Inisialisasi arah sparql untuk rdf ---
     $sparql_jena = new \EasyRdf\Sparql\Client('http://localhost:3030/civic/sparql');
-
+    //--query rdf
     $sparql_query = '
     SELECT DISTINCT ?label ?comment ?name ?manufacturer ?designer ?fProduction ?assembly
     WHERE {?m rdfs:label ?label;
@@ -23,13 +25,39 @@ use EasyRdf\RdfNamespace;
               dbp:designer ?designer;
               dbo:productionStartYear ?fProduction;
               dbp:assembly ?assembly. }';
-
     // $sparql_query1 = '
     // SELECT ?m ?abstract
     // WHERE {?m dbo:abstract ?abstract. }';
-    
     $result = $sparql_jena->query($sparql_query);
     // $result1 = $sparql_jena->query($sparql_query1);
+
+     //---------Inisialisasi arah sparql untuk dbpedia ---
+    $sparql_endpoint = 'https://dbpedia.org/sparql';
+    $sparql_dbpedia = new \EasyRdf\Sparql\Client($sparql_endpoint);
+    //query dbpedia
+    $query_dbpedia = "
+        Select * WHERE {
+            ?civic  rdfs:label 'Honda Civic'@en.
+            ?civic dbo:abstract ?deskripsi.
+            ?civic dbo:thumbnail ?gambar.
+            FILTER( LANG (?deskripsi) = 'en')
+        }";
+
+    $result_dbpedia = $sparql_dbpedia->query($query_dbpedia);
+    //menyimpan hasil query ke dalam array dbpedia
+    $dbpedia = [];
+    foreach ( $result_dbpedia as $row ) { 
+    $dbpedia = [
+    'deskripsi' => $row->deskripsi, //deskripsi civic
+    'gambar' => $row->gambar,
+    ];
+
+    break;
+}
+
+    echo $dbpedia['deskripsi'];
+    echo "<img src=".$dbpedia['gambar'].">";                             
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -220,6 +248,7 @@ use EasyRdf\RdfNamespace;
                                 <div class="project-text w-100 my-auto text-center text-lg-right">
                                     <h4 class="text-white">Chart</h4>
                                     <p class="mb-0 text-white-50">Another example of a project with its respective description. These sections work well responsively as well, try this theme on a small screen!</p>
+                                      <?php echo $dbpedia['deskripsi']; ?>
                                     <hr class="d-none d-lg-block mb-0 me-0" />
                                 </div>
                             </div>
