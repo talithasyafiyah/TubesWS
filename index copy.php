@@ -191,6 +191,11 @@ use LDAP\Result;
                         </div>
                     </div>
                 </div>
+                <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
+                    <div class="col-xl-7 col-lg-6"><img class="img-fluid mb-3 mb-lg-0" src="<?= $dbpedia['image'] ;?>" width="800" alt="..."/></div>
+                    <div class="col-xl-5 col-lg-6">
+                    </div>
+                </div>
                 <!-- Project One Row-->
                 <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
                     <div class="col-lg-6">
