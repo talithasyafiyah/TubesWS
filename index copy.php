@@ -15,53 +15,7 @@ use LDAP\Result;
    \EasyRdf\RdfNamespace::set('sale', 'http://example.org/schema/sale');
     \EasyRdf\RdfNamespace::setDefault('og');
 
-    //---------Inisialisasi arah sparql untuk rdf ---
-    $sparql_jena = new \EasyRdf\Sparql\Client('http://localhost:3030/civic/sparql');
-    //--query rdf
-    $sparql_query = '
-    SELECT DISTINCT ?label ?name ?manufacturer ?designer ?fProduction ?assembly
-    WHERE {?m rdfs:label ?label;
-              foaf:name ?name;
-              dbo:manufacturer ?manufacturer;
-              dbp:designer ?designer;
-              dbo:productionStartYear ?fProduction;
-              dbp:assembly ?assembly. }';
-
-    $result = $sparql_jena->query($sparql_query);
-    foreach ($result as $item) {
-        $data = [
-            'label' => $item->label,
-            'name' => $item->name,
-            'manufacturer' => $item->manufacturer,
-            'designer' => $item->designer,
-            'fProduction' => $item->fProduction,
-            'assembly' => $item->assembly,
-        ];
-        break;
-    }
-
-    //----------Query sales untuk chart--------
-    $sales_query = '
-    SELECT DISTINCT ?year18 ?year19 ?year20 ?year21 ?year22
-    WHERE {?s sale:year18 ?year18;
-              sale:year19 ?year19;
-              sale:year20 ?year20;
-              sale:year21 ?year21;
-              sale:year22 ?year22. }';
-
-    $sales_result = $sparql_jena->query($sales_query);
-    foreach ($sales_result as $field) {
-        $sale = [
-            'year18' => $field->year18,
-            'year19' => $field->year19,
-            'year20' => $field->year20,
-            'year21' => $field->year21,
-            'year22' => $field->year22,
-        ];
-        break;
-    }
-
-     //---------Inisialisasi arah sparql untuk dbpedia ---
+    //---------Inisialisasi arah sparql untuk data dari dbpedia ---
     $sparql_endpoint = 'https://dbpedia.org/sparql';
     $sparql_dbpedia = new \EasyRdf\Sparql\Client($sparql_endpoint);
     //query dbpedia
@@ -101,7 +55,12 @@ use LDAP\Result;
         'lat' => $field->lat,
         ];
         break;
-    }      
+    }
+
+    //---------Mengkoneksikan dengan civic.rdf di folder local ---
+    $uri_rdf = 'http://localhost/tubesWS/civic.rdf';
+    $data = \EasyRdf\Graph::newAndLoad($uri_rdf);
+    $doc = $data->primaryTopic();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -135,14 +94,15 @@ use LDAP\Result;
         google.charts.load('current', {'packages':['bar']});
         google.charts.setOnLoadCallback(drawStuff);
 
+        // Chart
         function drawStuff() {
             var data = new google.visualization.arrayToDataTable([
             ['Year', 'Sales'],
-            ["2018",<?= $sale['year18']; ?>],
-            ["2019",<?= $sale['year19']; ?>],
-            ["2020",<?= $sale['year20']; ?>],
-            ["2021",<?= $sale['year21']; ?>],
-            ['2022',<?= $sale['year22']; ?>]
+            ["2018",<?= $doc->get('sale:year18') ?>],
+            ["2019",<?= $doc->get('sale:year19') ?>],
+            ["2020",<?= $doc->get('sale:year20') ?>],
+            ["2021",<?= $doc->get('sale:year21') ?>],
+            ['2022',<?= $doc->get('sale:year22') ?>]
             ]);
 
             var options = {
@@ -172,7 +132,7 @@ use LDAP\Result;
                 <div class="d-flex justify-content-center">
                     <div class="text-center">
                         <h1 class="mx-auto my-0 text-uppercase">
-                            <?= $data['label']; ?>
+                            <?= $doc->get('foaf:name') ?>
                         </h1>
                         <h2 class="text-white-50 mx-auto mt-2 mb-5">An elegant, cool, handsome car.</h2>
                         <a class="btn btn-primary" href="#about">Get Started</a>
@@ -186,7 +146,7 @@ use LDAP\Result;
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-lg-8">
                         <h2 class="text-white mb-4">
-                            <?= $data['label']; ?>
+                            <?= $doc->get('foaf:name') ?>
                         </h2>
                         <p class="text-white-50">
                             <?= $dbpedia['abstract'];?>
@@ -205,32 +165,27 @@ use LDAP\Result;
                     <div class="col-xl-5 col-lg-6">
                         <div class="featured-text text-lg-left">
                             <!-- <h4>Shoreline</h4> -->
-                            <p class="text-black-50 mb-2" style="font-size: xx-large;"><?= $data['name']; ?></p>
+                            <p class="text-black-50 mb-2" style="font-size: xx-large;">About <?= $doc->get('foaf:name') ?></p>
                             <table>
                                 <tr>
                                     <td>Designer</td>
                                     <td>:</td>
-                                    <td><?= $data['designer']; ?></td>
+                                    <td><?= $doc->get('dbp:designer') ?></td>
                                 </tr>
                                 <tr>
                                     <td>First Production</td>
                                     <td>:</td>
-                                    <td>
-                                        <?php
-                                            $date = date_create($data['fProduction']);
-                                            echo date_format($date, "d F Y");
-                                        ?>
-                                    </td>
+                                    <td><?= $doc->get('dbo:productionStartYear') ?></td>
                                 </tr>
                                 <tr>
                                     <td>Manufacturer</td>
                                     <td>:</td>
-                                    <td><?= $data['manufacturer']; ?></td>
+                                    <td><?= $doc->get('dbo:manufacturer') ?></td>
                                 </tr>
                                 <tr>
                                     <td>First Assembly</td>
                                     <td>:</td>
-                                    <td><?= $data['assembly']; ?></td>
+                                    <td><?= $doc->get('dbp:assembly') ?></td>
                                 </tr>
                             </table>
                         </div>
@@ -239,24 +194,25 @@ use LDAP\Result;
                 <!-- Project One Row-->
                 <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
                     <div class="col-lg-6">
-                        <div id="map">
+                        <!-- Map -->
+                        <div id="map"></div>
                             <script>
-                                var map = L.map('map').setView([<?= $map['lat']; ?>, <?= $map['long']; ?>], 13);
+                                var map = L.map('map').setView([34.700001, 136.500000], 13);
 
-                                L.tileLayer('https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=R502YF4wURp0CyIf120D', {
-                                    attribution: ''
+                                L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                                    attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                                    id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1
                                 }).addTo(map);
                                 L.marker([<?= $map['lat']; ?>, <?= $map['long']; ?>]).addTo(map)
-                                .bindPopup('Mie Prefecture')
+                                .bindPopup('<b><?= $doc->get('dbp:assembly') ?>.')
                                 .openPopup();
                             </script>
-                        </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="bg-black text-center h-100 project">
                             <div class="d-flex h-100">
                                 <div class="project-text w-100 my-auto text-center text-lg-left">
-                                    <h6 class="text-white-50">First assembly in <?= $data['assembly']; ?>.</h6>
+                                    <h6 class="text-white-50">First assembly in <?= $doc->get('dbp:assembly') ?>.</h6>
                                     <p class="mb-0 text-white-50"><?= $map['lat']; ?> - <?= $map['long']; ?></p>
                                     <hr class="d-none d-lg-block mb-0 ms-0" />
                                 </div>
@@ -275,7 +231,7 @@ use LDAP\Result;
                         <div class="bg-black text-center h-100 project">
                             <div class="d-flex h-100">
                                 <div class="project-text w-100 my-auto text-center text-lg-right">
-                                    <p class="mb-0 text-white-50">Honda Civic US Sales by Year</p>
+                                    <p class="mb-0 text-white-50"><?= $doc->get('foaf:name') ?> US Sales by Year</p>
                                     <p class="mb-0 text-white-50">2018 - 2022</p>
                                     <hr class="d-none d-lg-block mb-0 me-0" />
                                 </div>
@@ -293,8 +249,9 @@ use LDAP\Result;
                         <div class="card py-4">
                             <div class="card-body text-center">
                                 <i class="fas fa-user text-primary mb-2"></i>
-                                <h4 class="text-uppercase m-0">Talitha</h4>
+                                <h4 class="text-uppercase m-0">Talitha Syafiyah</h4>
                                 <hr class="my-4 mx-auto" />
+                                <h4 class="text-uppercase m-0">211402018</h4>
                             </div>
                         </div>
                     </div>
@@ -302,9 +259,9 @@ use LDAP\Result;
                         <div class="card py-4">
                             <div class="card-body text-center">
                                 <i class="fas fa-user text-primary mb-2"></i>
-                                <h4 class="text-uppercase m-0">Icha</h4>
+                                <h4 class="text-uppercase m-0">Al Anhar Sufi</h4>
                                 <hr class="my-4 mx-auto" />
-
+                                <h4 class="text-uppercase m-0">211402018</h4>
                             </div>
                         </div>
                     </div>
@@ -312,8 +269,9 @@ use LDAP\Result;
                         <div class="card py-4">
                             <div class="card-body text-center">
                                 <i class="fas fa-user text-primary mb-2"></i>
-                                <h4 class="text-uppercase m-0">Al Anhar</h4>
+                                <h4 class="text-uppercase m-0">Icha Frabila</h4>
                                 <hr class="my-4 mx-auto" />
+                                <h4 class="text-uppercase m-0">211402018</h4>
                             </div>
                         </div>
                     </div>
@@ -323,8 +281,9 @@ use LDAP\Result;
                         <div class="card py-4">
                             <div class="card-body text-center">
                                 <i class="fas fa-user text-primary mb-2"></i>
-                                <h4 class="text-uppercase m-0">Erastus</h4>
+                                <h4 class="text-uppercase m-0">Erastus Keytaro Bangun</h4>
                                 <hr class="my-4 mx-auto" />
+                                <h4 class="text-uppercase m-0">211402018</h4>
                             </div>
                         </div>
                     </div>
@@ -332,18 +291,9 @@ use LDAP\Result;
                         <div class="card py-4">
                             <div class="card-body text-center">
                                 <i class="fas fa-user text-primary mb-2"></i>
-                                <h4 class="text-uppercase m-0">Deni</h4>
+                                <h4 class="text-uppercase m-0">Deni Putra Sitanggang</h4>
                                 <hr class="my-4 mx-auto" />
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3 mb-md-0">
-                        <div class="card py-4">
-                            <div class="card-body text-center">
-                                <i class="fas fa-user text-primary mb-2"></i>
-                                <h4 class="text-uppercase m-0">Joel</h4>
-                                <hr class="my-4 mx-auto" />
+                                <h4 class="text-uppercase m-0">211402018</h4>
                             </div>
                         </div>
                     </div>
