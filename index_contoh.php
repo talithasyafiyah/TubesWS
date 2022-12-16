@@ -23,10 +23,10 @@ use EasyRdf\RdfNamespace;
               foaf:name ?name;
               dbo:manufacturer ?manufacturer;
               dbp:designer ?designer;
-              dbp:longitude ?longitude;
-              dbp:latitude ?latitude;
               dbo:productionStartYear ?fProduction;
               dbp:assembly ?assembly;
+              dbp:longitude ?longitude;
+              dbp:latitude ?latitude;
               sale:year18 ?year18;
               sale:year19 ?year19;
               sale:year20 ?year20;
@@ -203,7 +203,7 @@ use EasyRdf\RdfNamespace;
                         <div class="bg-black text-center h-100 project">
                             <div class="d-flex h-100">
                                 <div class="project-text w-100 my-auto text-center text-lg-right">
-                                    <h4 class="text-white">Chart</h4>
+                                    <h4 class="text-white">Chart <?= $row->latitude; ?></h4>
                                     <p class="mb-0 text-white-50">Honda Civic US Sales by Year</p>
                                     <p class="mb-0 text-white-50">2018 - 2022</p>
                                     <hr class="d-none d-lg-block mb-0 me-0" />
@@ -289,20 +289,16 @@ use EasyRdf\RdfNamespace;
 
         <!-- ########## Leaflet Map Script ######### -->
         <?php 
-            $longitude = $row->longitude;
-            $latitude = $row->latitude;
-            // $longitude = '34.700001';
-            // $latitude = '136.500000';
             $map_script = "
-            const map = L.map('map').setView([". $longitude . ", " . $latitude ."], 13);
+            const map = L.map('map').setView([34.70000111, 136.5000001], 13);
 
             const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>'
             }).addTo(map);
         
-            const marker = L.marker([". $longitude . ", " . $latitude ."]).addTo(map)
-                .bindPopup('<b>Honda Headquarters</b><br />2 Chome-1-1 Minamiaoyama, Minato City, Tokyo 107-0062, Japan.').openPopup();
+            const marker = L.marker([34.700001, 136.500000]).addTo(map)
+                .bindPopup('<b>Hello world!</b><br />I am a popup.').openPopup();
             "
 
 	// const circle = L.circle([51.508, -0.11], {
