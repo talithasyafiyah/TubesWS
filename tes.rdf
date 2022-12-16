@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:dc="http://purl.org/dc/terms/">
+
+  <foaf:PersonalProfileDocument rdf:about="http://localhost/tubesWS/tes.rdf">
+    <rdfs:label>Saul Hudson (Slash) Bibliography</rdfs:label>
+    <foaf:maker rdf:resource="http://localhost/tubesWS/"/>
+    <foaf:primaryTopic rdf:resource="http://localhost/tubesWS/"/>
+  </foaf:PersonalProfileDocument>
+
+  <foaf:Person rdf:about="http://localhost/tubesWS/">
+    <foaf:name>Slash</foaf:name>
+    <foaf:title>Mr</foaf:title>
+    <foaf:givenName>Saul</foaf:givenName>
+    <foaf:familyName>Hudson</foaf:familyName>
+     <owl:sameAs>
+      <foaf:Person rdf:about="http://dbpedia.org/resource/Honda_Civic">
+        <rdfs:label>Honda_Civic</rdfs:label>
+        <foaf:homepage rdf:resource="http://dbpedia.org/resource/Honda_Civic"/>
+      </foaf:Person>
+    </owl:sameAs>
+
+    <foaf:pastProject>
+      <foaf:Project rdf:about="http://dbpedia.org/page/Rock_Prophecies">
+        <foaf:homepage rdf:resource="https://global.honda/"/>
+        <foaf:name>Rock Prophecies</foaf:name>
+      </foaf:Project>
+      <foaf:Project rdf:about="http://dbpedia.org/page/The_Distortion_of_Sound">
+        <foaf:homepage rdf:resource="https://www.youtube.com/watch?v=hBGLMDnjuaI"/>
+        <foaf:name>The Distortion of Sound</foaf:name>
+      </foaf:Project>
+    </foaf:pastProject>
+
+  </foaf:Person>
+</rdf:RDF>
