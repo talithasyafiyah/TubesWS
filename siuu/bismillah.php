@@ -64,12 +64,12 @@ use EasyRdf\RdfNamespace;
 
     $sparql_query = '
       SELECT distinct * WHERE {
-           <' . $slash_uri . '> dbo:manufacturer ?tempat_lahir ;
+           <' . $slash_uri . '> dbo:manufacturer ?manufacturer ;
                rdfs:comment ?info ;
-               dbo:productionStartYear ?debut ;
+               dbo:productionStartYear ?production ;
                foaf:isPrimaryTopicOf ?wiki .
-           ?tempat_lahir rdfs:label ?tempat_lahir_label.
-          FILTER (lang(?info) = "en" && lang(?tempat_lahir_label) = "en")
+           ?manufacturer rdfs:label ?manufacturer_label.
+          FILTER (lang(?info) = "en" && lang(?manufacturer_label) = "en")
       }
     ';
     // Dibawah rdfs:comment ada dbp:instrumen
@@ -80,8 +80,8 @@ use EasyRdf\RdfNamespace;
     $detail = [];
     foreach ($result as $row) {
       $detail = [
-        'tempat_lahir'=>$row->tempat_lahir_label,
-        'debut'=>$row->debut,
+        'manufacturer'=>$row->manufacturer_label,
+        'production'=>$row->production,
         'info'=>$row->info,
         'wiki'=> $row->wiki,
       ];
@@ -169,7 +169,7 @@ use EasyRdf\RdfNamespace;
         \EasyRdf\RdfNamespace::setDefault('og');
 
         $project_url = '';
-        foreach ($doc->all('foaf:pastProject') as $akun) {
+        foreach ($doc->all('owl:extra') as $akun) {
             $project_url = $akun->get('foaf:homepage');
 
             $ogp = \EasyRdf\Graph::newAndLoad($project_url);

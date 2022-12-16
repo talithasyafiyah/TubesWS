@@ -11,6 +11,7 @@ use LDAP\Result;
     \EasyRdf\RdfNamespace::set('dc', 'http://purl.org/dc/terms/');
     \EasyRdf\RdfNamespace::set('dbo', 'http://dbpedia.org/ontology/');
     \EasyRdf\RdfNamespace::set('dbp', 'http://dbpedia.org/property/');
+    \EasyRdf\RdfNamespace::set('car', 'http://example.org/schema/car');
    \EasyRdf\RdfNamespace::set('geo', 'http://www.w3.org/2003/01/geo/wgs84_pos#');
    \EasyRdf\RdfNamespace::set('sale', 'http://example.org/schema/sale');
     \EasyRdf\RdfNamespace::setDefault('og');
@@ -61,6 +62,43 @@ use LDAP\Result;
     $uri_rdf = 'http://localhost/tubesWS/civic.rdf';
     $data = \EasyRdf\Graph::newAndLoad($uri_rdf);
     $doc = $data->primaryTopic();
+
+    // ambil data dbpedia Honda civic dari civic.rdf
+    $slash_uri = '';
+    foreach ($doc->all('owl:sameAs') as $akun) {
+        $slash_uri = $akun->get('foaf:homepage');
+        break;
+    }
+    
+    // set sparql endpoint
+    // $sparql_endpoint = 'https://dbpedia.org/sparql';
+    $sparql = new \EasyRdf\Sparql\Client($sparql_endpoint);
+
+    $sparql_query = '
+      SELECT distinct * WHERE {
+           <' . $slash_uri . '> dbo:manufacturer ?manufacturer ;
+               rdfs:comment ?info ;
+               dbo:productionStartYear ?production ;
+               foaf:isPrimaryTopicOf ?wiki .
+           ?manufacturer rdfs:label ?manufacturer_label.
+          FILTER (lang(?info) = "en" && lang(?manufacturer_label) = "en")
+      }
+    ';
+
+    $result = $sparql->query($sparql_query);
+
+    // ambil detail civic dari $result sparql
+    $detail = [];
+    foreach ($result as $row) {
+      $detail = [
+        'manufacturer'=>$row->manufacturer_label,
+        'production'=>$row->production,
+        'info'=>$row->info,
+        'wiki'=> $row->wiki,
+      ];
+
+      break;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -161,7 +199,17 @@ use LDAP\Result;
             <div class="container px-4 px-lg-5">
                 <!-- Open Graph Protocol -->
                 <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
-                    <div class="col-xl-7 col-lg-6"><img class="img-fluid mb-3 mb-lg-0" src="<?= $dbpedia['image'] ;?>" width="800" alt="..."/></div>
+                    <!--Mengambil gambar dari wiki-->
+                         <?php
+                        \EasyRdf\RdfNamespace::setDefault('og');
+                        $wiki = \EasyRdf\Graph::newAndLoad($detail['wiki']);
+                        $foto_url = $wiki->image;
+                        ?>
+
+                        <div class="col-xl-7 col-lg-6"><img class="img-fluid mb-3 mb-lg-0"
+                        src="<?= $foto_url ?>" width="800" alt="..."/>
+                        </div>
+                    <!----end---->
                     <div class="col-xl-5 col-lg-6">
                         <div class="featured-text text-lg-left">
                             <!-- <h4>Shoreline</h4> -->
@@ -191,18 +239,37 @@ use LDAP\Result;
                         </div>
                     </div>
                 </div>
-                <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
-                    <div class="col-xl-7 col-lg-6"><img class="img-fluid mb-3 mb-lg-0" src="<?= $dbpedia['image'] ;?>" width="800" alt="..."/></div>
-                    <div class="col-xl-5 col-lg-6">
-                    </div>
+
+                <!---The Reall OGP untuk mengambil title deskripsi dan gambar serta link dari website lain--->
+                <div class="row gx-0 mb-4 mb-lg-5 align-items-center">                
+                        <?php
+                        \EasyRdf\RdfNamespace::setDefault('og');
+                        $project_url = '';
+                        foreach ($doc->all('owl:extra') as $akun) {
+                        $project_url = $akun->get('foaf:homepage');
+                        $ogp = \EasyRdf\Graph::newAndLoad($project_url);
+                        ?>
+
+                        <!--content--->
+                        <div class="col-xl-7 col-lg-6">
+                        <img src="<?= $ogp->image ?>" width="100%"/> <br>
+                        <h4><?= $ogp->title ?></h4>
+                        <p><?= $ogp->description; ?></p>
+                        <p>Sumber: <a href="<?= $ogp->url ?>" target="_blank"><?= $ogp->site_name ?></a></p>
+                        </div>
+                        <!---end--->
+
+                        <?php } ?>
                 </div>
+            </div>
+                <!---end---->
                 <!-- Project One Row-->
                 <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
                     <div class="col-lg-6">
                         <!-- Map -->
                         <div id="map"></div>
                             <script>
-                                var map = L.map('map').setView([34.700001, 136.500000], 13);
+                                var map = L.map('map').setView([<?= $map['lat']; ?>, <?= $map['long']; ?>], 13);
 
                                 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
                                     attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',

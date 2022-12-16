@@ -7,16 +7,13 @@
          xmlns:dc="http://purl.org/dc/terms/">
 
   <foaf:PersonalProfileDocument rdf:about="http://localhost/tubesWS/tes.rdf">
-    <rdfs:label>Saul Hudson (Slash) Bibliography</rdfs:label>
+    <rdfs:label>Honda_Civic</rdfs:label>
     <foaf:maker rdf:resource="http://localhost/tubesWS/"/>
     <foaf:primaryTopic rdf:resource="http://localhost/tubesWS/"/>
   </foaf:PersonalProfileDocument>
 
   <foaf:Person rdf:about="http://localhost/tubesWS/">
-    <foaf:name>Slash</foaf:name>
-    <foaf:title>Mr</foaf:title>
-    <foaf:givenName>Saul</foaf:givenName>
-    <foaf:familyName>Hudson</foaf:familyName>
+    <foaf:name>Honda_Civic</foaf:name>
      <owl:sameAs>
       <foaf:Person rdf:about="http://dbpedia.org/resource/Honda_Civic">
         <rdfs:label>Honda_Civic</rdfs:label>
@@ -24,7 +21,7 @@
       </foaf:Person>
     </owl:sameAs>
 
-    <foaf:pastProject>
+    <owl:extra>
       <foaf:Project rdf:about="http://dbpedia.org/page/Rock_Prophecies">
         <foaf:homepage rdf:resource="https://global.honda/"/>
         <foaf:name>Rock Prophecies</foaf:name>
@@ -33,7 +30,7 @@
         <foaf:homepage rdf:resource="https://www.youtube.com/watch?v=hBGLMDnjuaI"/>
         <foaf:name>The Distortion of Sound</foaf:name>
       </foaf:Project>
-    </foaf:pastProject>
+    </owl:extra>
 
   </foaf:Person>
 </rdf:RDF>
