@@ -1,10 +1,8 @@
 <?php
 
 use EasyRdf\RdfNamespace;
-use LDAP\Result;
-
     require 'vendor/autoload.php';
-    //----NameSpace-------
+
     \EasyRdf\RdfNamespace::set('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
     \EasyRdf\RdfNamespace::set('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
     \EasyRdf\RdfNamespace::set('owl', 'http://www.w3.org/2002/07/owl#');
@@ -12,52 +10,48 @@ use LDAP\Result;
     \EasyRdf\RdfNamespace::set('car', 'http://example.org/schema/car');
     \EasyRdf\RdfNamespace::set('dbo', 'http://dbpedia.org/ontology/');
     \EasyRdf\RdfNamespace::set('dbp', 'http://dbpedia.org/property/');
+    \EasyRdf\RdfNamespace::set('sale', 'http://example.org/schema/sale');
+    \EasyRdf\RdfNamespace::set('geo', 'http://www.w3.org/2003/01/geo/wgs84_pos#');
     \EasyRdf\RdfNamespace::setDefault('og');
-    //---------Inisialisasi arah sparql untuk rdf ---
+
     $sparql_jena = new \EasyRdf\Sparql\Client('http://localhost:3030/civic/sparql');
-    //--query rdf
+
     $sparql_query = '
-    SELECT DISTINCT ?label ?comment ?name ?manufacturer ?designer ?fProduction ?assembly
+    SELECT DISTINCT ?label ?comment ?name ?manufacturer ?designer
+    ?fProduction ?assembly ?year18 ?year19 ?year20 ?year21 ?year22
     WHERE {?m rdfs:label ?label;
               rdfs:comment ?comment;
               foaf:name ?name;
               dbo:manufacturer ?manufacturer;
               dbp:designer ?designer;
               dbo:productionStartYear ?fProduction;
-              dbp:assembly ?assembly. }';
+              dbp:assembly ?assembly;
+              sale:year18 ?year18;
+              sale:year19 ?year19;
+              sale:year20 ?year20;
+              sale:year21 ?year21;
+              sale:year22 ?year22. }';
+
+    // $sparql_query1 = '
+    // SELECT DISTINCT ?year18 ?year19 ?year20 ?year21 ?year22
+    // WHERE {?m sale:year18 ?year18;
+    //           sale:year19 ?year19;
+    //           sale:year20 ?year20;
+    //           sale:year21 ?year21;
+    //           sale:year22 ?year22. }';
+
     // $sparql_query1 = '
     // SELECT ?m ?abstract
     // WHERE {?m dbo:abstract ?abstract. }';
+    
     $result = $sparql_jena->query($sparql_query);
     // $result1 = $sparql_jena->query($sparql_query1);
 
-     //---------Inisialisasi arah sparql untuk dbpedia ---
-    $sparql_endpoint = 'https://dbpedia.org/sparql';
-    $sparql_dbpedia = new \EasyRdf\Sparql\Client($sparql_endpoint);
-    //query dbpedia
-    $query_dbpedia = "
-        Select * WHERE {
-            ?civic  rdfs:label 'Honda Civic'@en.
-            ?civic dbo:abstract ?deskripsi.
-            ?civic dbo:thumbnail ?gambar.
-            FILTER( LANG (?deskripsi) = 'en')
-        }";
 
-    $result_dbpedia = $sparql_dbpedia->query($query_dbpedia);
-    //menyimpan hasil query ke dalam array dbpedia
-    $dbpedia = [];
-    foreach ( $result_dbpedia as $row ) { 
-    $dbpedia = [
-    'deskripsi' => $row->deskripsi, //deskripsi civic
-    'gambar' => $row->gambar,
-    ];
-
-    break;
-}
-
-    echo $dbpedia['deskripsi'];
-    echo "<img src=".$dbpedia['gambar'].">";                             
-
+    // pastikan $uri_rdf sesuai dengan setting di komputer Anda
+    $uri_rdf = 'http://localhost/tubesWS/civic.rdf';
+    $data = \EasyRdf\Graph::newAndLoad($uri_rdf);
+    $doc = $data->primaryTopic();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,17 +64,6 @@ use LDAP\Result;
         <link rel="icon" type="image/x-icon" href="assets/favicon1.ico" />
         <!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
-        <!-- leaflet JS --->
-         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-                integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
-                crossorigin=""/>
-        <!-- Make sure you put this AFTER Leaflet's CSS -->
-        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-            integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
-            crossorigin="">
-        </script>
-        <!--custom css--->
-        <link href="css/tes.css" rel="stylesheet" />       
         <!-- Google fonts-->
         <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
@@ -91,26 +74,29 @@ use LDAP\Result;
         google.charts.load('current', {'packages':['bar']});
         google.charts.setOnLoadCallback(drawStuff);
 
+        <?php
+            foreach ($result as $row) {
+        ?>
         function drawStuff() {
             var data = new google.visualization.arrayToDataTable([
-            ['Opening Move', 'Percentage'],
-            ["King's pawn (e4)", 44],
-            ["Queen's pawn (d4)", 31],
-            ["Knight to King 3 (Nf3)", 12],
-            ["Queen's bishop pawn (c4)", 10],
-            ['Other', 3]
+            ['Year', 'Sales'],
+            ["2018", <?= $row->year18; ?>],
+            ["2019", <?= $row->year19; ?>],
+            ["2020", <?= $row->year20; ?>],
+            ["2021", <?= $row->year21; ?>],
+            ['2022', <?= $row->year22; ?>]
             ]);
 
             var options = {
-            title: 'Chess opening moves',
-            width: 600,
+            title: 'Honda Civic Sales in US',
+            width: 500,
             legend: { position: 'none' },
-            chart: { title: 'Chess opening moves',
-                    subtitle: 'popularity by percentage' },
+            chart: { title: 'Honda Civic Sales in US',
+                    subtitle: 'by Year' },
             bars: 'horizontal', // Required for Material Bar Charts.
             axes: {
                 x: {
-                0: { side: 'top', label: 'Percentage'} // Top x-axis.
+                0: { side: 'top', label: 'Amount'} // Top x-axis.
                 }
             },
             bar: { groupWidth: "90%" }
@@ -128,10 +114,7 @@ use LDAP\Result;
                 <div class="d-flex justify-content-center">
                     <div class="text-center">
                         <h1 class="mx-auto my-0 text-uppercase">
-                            <?php
-                                foreach ($result as $row) {
-                                    echo $row->label; 
-                            ?> 
+                            <?= $row->label; ?>
                         </h1>
                         <h2 class="text-white-50 mx-auto mt-2 mb-5">An elegant, cool, handsome car.</h2>
                         <a class="btn btn-primary" href="#about">Get Started</a>
@@ -174,7 +157,11 @@ use LDAP\Result;
                                 <tr>
                                     <td>First Production</td>
                                     <td>:</td>
-                                    <td><?= $row->fProduction; ?></td>
+                                    <td>
+                                        <?php
+                                            $date = date_create($row->fProduction);
+                                            echo date_format($date, "d F Y"); 
+                                        ?></td>
                                 </tr>
                                 <tr>
                                     <td>Manufacturer</td>
@@ -194,46 +181,10 @@ use LDAP\Result;
                 <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
                     <div class="col-lg-6"><img class="img-fluid" src="assets/img/demo-image-01.jpg" alt="..." /></div>
                     <div class="col-lg-6">
-                        <div class="text-center h-100 project">
+                        <div class="bg-black text-center h-100 project">
                             <div class="d-flex h-100">
                                 <div class="project-text w-100 my-auto text-center text-lg-left">
-                                       <!---Map--->
-                                    <h4 class="">Map</h4>
-                                    <div id="map"></div>
-
-                                    <script>
-                                        var map = L.map('map').setView([34.700001, 136.500000], 13);
-
-                                        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-                                            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-                                         id: 'mapbox/streets-v11',
-                tileSize: 512,
-                zoomOffset: -1
-                                        }).addTo(map);
-                                        L.marker([34.700001, 136.500000]).addTo(map)
-                                        .bindPopup('<b>Prefektur Mie Gacoan!</b><br /> Level 5.')
-                                        .openPopup();
-                                    </script>
-                                 
-                                    <!-- 
-                                    print "<div id='mapid'></div>";
-                                    $map_script = " var mymap = L.map('mapid').setView([" . $detail['lat'] . "," . $detail['long'] . "], 13);
-                                    "-->
-
-                                    <!-- <div id="map"></div>
-                                      <script>
-                                        var map = L.map('map').setView([34.700001, 136.500000], 13);
-                                            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                                maxZoom: 18,
-                                                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' ,
-                                                tileSize : 512,
-                                                zoomOffset: -1
-                                            }).addTo(map);
-
-                                            L.marker([34.700001, 136.500000]).addTo(map)
-                                            .bindPopup('<b>Prefektur Mie Gacoan!</b><br /> Level 5.').openPopup();
-                                        </script> -->
-                                    <!---end--->
+                                    <h6 class="text-white-50">First assembly in Suzuka, Mie, Japan.</h6>
                                     <hr class="d-none d-lg-block mb-0 ms-0" />
                                 </div>
                             </div>
@@ -243,15 +194,17 @@ use LDAP\Result;
                 <!-- Project Two Row-->
                 <div class="row gx-0 justify-content-center">
                     <div class="col-lg-6">
-                        <div id="top_x_div" style="width: 600px; height: 500px;"></div>
+                        <div class="card mx-4 mt-4">
+                            <div id="top_x_div" style="width: 500px; height: 400px;"></div>
+                        </div>
                     </div>
                     <div class="col-lg-6 order-lg-first">
                         <div class="bg-black text-center h-100 project">
                             <div class="d-flex h-100">
                                 <div class="project-text w-100 my-auto text-center text-lg-right">
                                     <h4 class="text-white">Chart</h4>
-                                    <p class="mb-0 text-white-50">Another example of a project with its respective description. These sections work well responsively as well, try this theme on a small screen!</p>
-                                      <?php echo $dbpedia['deskripsi']; ?>
+                                    <p class="mb-0 text-white-50">Honda Civic US Sales by Year</p>
+                                    <p class="mb-0 text-white-50">2018 - 2022</p>
                                     <hr class="d-none d-lg-block mb-0 me-0" />
                                 </div>
                             </div>
@@ -288,6 +241,7 @@ use LDAP\Result;
                             <div class="card-body text-center">
                                 <i class="fas fa-user text-primary mb-2"></i>
                                 <h4 class="text-uppercase m-0">Al Anhar</h4>
+                                <h1><?= $doc->get('foaf:name') ?></h1>
                                 <hr class="my-4 mx-auto" />
                             </div>
                         </div>

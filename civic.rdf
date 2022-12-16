@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Honda Civic -->
+<rdf:RDF
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:dbp="http://dbpedia.org/property/"
+	xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns:dct="http://purl.org/dc/terms/"
+	xmlns:dbo="http://dbpedia.org/ontology/"
+	xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:gold="http://purl.org/linguistics/gold/"
+	xmlns:prov="http://www.w3.org/ns/prov#" 
+	xmlns:sale="http://example.org/schema/sale">
+
+  <foaf:PersonalProfileDocument rdf:about="http://localhost/tubesWS/civic.rdf">
+    <rdfs:label>Honda Civic</rdfs:label>
+    <foaf:maker rdf:resource="http://localhost/tubesWS/"/>
+    <foaf:primaryTopic rdf:resource="http://localhost/tubesWS/"/>
+  </foaf:PersonalProfileDocument>
+
+<rdf:Description rdf:about="http://localhost/tubesWS/">
+	<foaf:name xml:lang="en">Honda Civic siuuu</foaf:name>
+  <dbo:manufacturer xml:lang="en">Honda</dbo:manufacturer>
+	<dbo:productionStartYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">1972-01-01</dbo:productionStartYear>
+	<dbp:designer xml:lang="en">Yuki Ishii and Hitomaro Asano</dbp:designer>
+	<dbp:assembly xml:lang="en">Suzuka, Mie, Japan</dbp:assembly>
+</rdf:Description>
+
+<!-- <sale:year18 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">325,760</sale:year18>
+	<sale:year19 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">325,650</sale:year19>
+	<sale:year20 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">261,225</sale:year20>
+	<sale:year21 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">263,787</sale:year21>
+	<sale:year22 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">119,023</sale:year22> -->
+
+
+<!-- <rdf:Description rdf:about="http://localhost/tubesWS/">
+	<foaf:name xml:lang="en">Honda Civic</foaf:name>
+	<dbo:abstract rdf:resource="https://dbpedia.org/page/Honda_Civic"/>
+  <dbo:manufacturer xml:lang="en">Honda</dbo:manufacturer>
+	<dbo:productionStartYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">1972-01-01</dbo:productionStartYear>
+	<dbp:designer xml:lang="en">Yuki Ishii and Hitomaro Asano</dbp:designer>
+	<dbp:battery rdf:resource="https://dbpedia.org/page/Lithium-ion_battery"/>
+	<dbp:assembly xml:lang="en">Suzuka, Mie, Japan</dbp:assembly>
+</rdf:Description> -->
+
+</rdf:RDF>
