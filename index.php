@@ -11,9 +11,9 @@ use LDAP\Result;
     \EasyRdf\RdfNamespace::set('dc', 'http://purl.org/dc/terms/');
     \EasyRdf\RdfNamespace::set('dbo', 'http://dbpedia.org/ontology/');
     \EasyRdf\RdfNamespace::set('dbp', 'http://dbpedia.org/property/');
-    \EasyRdf\RdfNamespace::set('car', 'http://example.org/schema/car');
-   \EasyRdf\RdfNamespace::set('geo', 'http://www.w3.org/2003/01/geo/wgs84_pos#');
-   \EasyRdf\RdfNamespace::set('sale', 'http://example.org/schema/sale');
+    \EasyRdf\RdfNamespace::set('car', 'http://example.org/schema/car/');
+    \EasyRdf\RdfNamespace::set('geo', 'http://www.w3.org/2003/01/geo/wgs84_pos#');
+    \EasyRdf\RdfNamespace::set('sale', 'http://example.org/schema/sale/');
     \EasyRdf\RdfNamespace::setDefault('og');
 
     //---------Inisialisasi arah sparql untuk data dari dbpedia ---
@@ -170,7 +170,7 @@ use LDAP\Result;
                 <div class="d-flex justify-content-center">
                     <div class="text-center">
                         <h1 class="mx-auto my-0 text-uppercase">
-                            <?= $doc->get('foaf:name') ?>
+                            <?= $doc->get('car:name') ?>
                         </h1>
                         <h2 class="text-white-50 mx-auto mt-2 mb-5">An elegant, cool, handsome car.</h2>
                         <a class="btn btn-primary" href="#about">Get Started</a>
@@ -184,7 +184,7 @@ use LDAP\Result;
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-lg-8">
                         <h2 class="text-white mb-4">
-                            <?= $doc->get('foaf:name') ?>
+                            <?= $doc->get('car:name') ?>
                         </h2>
                         <p class="text-white-50">
                             <?= $dbpedia['abstract'];?>
@@ -213,27 +213,27 @@ use LDAP\Result;
                     <div class="col-xl-5 col-lg-6">
                         <div class="featured-text text-lg-left">
                             <!-- <h4>Shoreline</h4> -->
-                            <p class="text-black-50 mb-2" style="font-size: xx-large;">About <?= $doc->get('foaf:name') ?></p>
+                            <p class="text-black-50 mb-2" style="font-size: xx-large;">About <?= $doc->get('car:name') ?></p>
                             <table>
                                 <tr>
                                     <td>Designer</td>
                                     <td>:</td>
-                                    <td><?= $doc->get('dbp:designer') ?></td>
+                                    <td><?= $doc->get('car:designer') ?></td>
                                 </tr>
                                 <tr>
                                     <td>First Production</td>
                                     <td>:</td>
-                                    <td><?= $doc->get('dbo:productionStartYear') ?></td>
+                                    <td><?= $doc->get('car:productionStartYear') ?></td>
                                 </tr>
                                 <tr>
                                     <td>Manufacturer</td>
                                     <td>:</td>
-                                    <td><?= $doc->get('dbo:manufacturer') ?></td>
+                                    <td><?= $doc->get('car:manufacturer') ?></td>
                                 </tr>
                                 <tr>
                                     <td>First Assembly</td>
                                     <td>:</td>
-                                    <td><?= $doc->get('dbp:assembly') ?></td>
+                                    <td><?= $doc->get('car:assembly') ?></td>
                                 </tr>
                             </table>
                         </div>
@@ -245,7 +245,7 @@ use LDAP\Result;
                     <?php
                     \EasyRdf\RdfNamespace::setDefault('og');
                     $project_url = '';
-                    foreach ($doc->all('owl:extra') as $akun) {
+                    foreach ($doc->all('car:extra') as $akun) {
                     $project_url = $akun->get('foaf:homepage');
                     $ogp = \EasyRdf\Graph::newAndLoad($project_url);
                     ?>
@@ -281,7 +281,7 @@ use LDAP\Result;
                                     id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1
                                 }).addTo(map);
                                 L.marker([<?= $map['lat']; ?>, <?= $map['long']; ?>]).addTo(map)
-                                .bindPopup('<b><?= $doc->get('dbp:assembly') ?>.')
+                                .bindPopup('<b><?= $doc->get('car:assembly') ?>.')
                                 .openPopup();
                             </script>
                     </div>
@@ -289,7 +289,7 @@ use LDAP\Result;
                         <div class="bg-black text-center h-100 project">
                             <div class="d-flex h-100">
                                 <div class="project-text w-100 my-auto text-center text-lg-left">
-                                    <h6 class="text-white-50">First assembly in <?= $doc->get('dbp:assembly') ?>.</h6>
+                                    <h6 class="text-white-50">First assembly in <?= $doc->get('car:assembly') ?>.</h6>
                                     <p class="mb-0 text-white-50"><?= $map['lat']; ?> - <?= $map['long']; ?></p>
                                     <hr class="d-none d-lg-block mb-0 ms-0" />
                                 </div>
@@ -308,7 +308,7 @@ use LDAP\Result;
                         <div class="bg-black text-center h-100 project">
                             <div class="d-flex h-100">
                                 <div class="project-text w-100 my-auto text-center text-lg-right">
-                                    <p class="mb-0 text-white-50"><?= $doc->get('foaf:name') ?> US Sales by Year</p>
+                                    <p class="mb-0 text-white-50"><?= $doc->get('car:name') ?> US Sales by Year</p>
                                     <p class="mb-0 text-white-50">2018 - 2022</p>
                                     <hr class="d-none d-lg-block mb-0 me-0" />
                                 </div>

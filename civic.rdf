@@ -10,7 +10,8 @@
 	xmlns:owl="http://www.w3.org/2002/07/owl#"
 	xmlns:gold="http://purl.org/linguistics/gold/"
 	xmlns:prov="http://www.w3.org/ns/prov#" 
-	xmlns:sale="http://example.org/schema/sale">
+	xmlns:sale="http://example.org/schema/sale/"
+	xmlns:car="http://example.org/schema/car/">
 
 	<foaf:PersonalProfileDocument rdf:about="http://localhost/tubesWS/civic.rdf">
 		<rdfs:label>Honda Civic</rdfs:label>
@@ -18,8 +19,41 @@
 		<foaf:primaryTopic rdf:resource="http://localhost/tubesWS/"/>
 	</foaf:PersonalProfileDocument>
 
+	<car:civic rdf:about="http://localhost/tubesWS/">
+
+		<car:name>Honda_Civic</car:name>
+		<car:manufacturer xml:lang="en">Honda</car:manufacturer>
+		<car:productionStartYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">1972-01-01</car:productionStartYear>
+		<car:designer xml:lang="en">Yuki Ishii and Hitomaro Asano</car:designer>
+		<car:assembly xml:lang="en">Suzuka, Mie, Japan</car:assembly>
+		
+		<owl:sameAs>
+		<car:civic rdf:about="http://dbpedia.org/resource/Honda_Civic">
+			<rdfs:label>Honda_Civic</rdfs:label>
+			<foaf:homepage rdf:resource="http://dbpedia.org/resource/Honda_Civic"/>
+		</car:civic>
+		</owl:sameAs>
+
+		<sale:year18 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">325760</sale:year18>
+		<sale:year19 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">325650</sale:year19>
+		<sale:year20 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">261225</sale:year20>
+		<sale:year21 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">263787</sale:year21>
+		<sale:year22 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">119023</sale:year22>
+
+		<car:extra>
+			<car:about rdf:about="https://dbpedia.org/page/Honda">
+				<car:title>Honda</car:title>
+				<foaf:homepage rdf:resource="https://global.honda/"/>		
+			</car:about>
+			<car:about rdf:about="http://dbpedia.org/page/Youtube">
+				<car:title>Trailer</car:title>
+				<foaf:homepage rdf:resource="https://www.youtube.com/watch?v=hBGLMDnjuaI"/>
+			</car:about>
+		</car:extra>
 	
-	<foaf:Person rdf:about="http://localhost/tubesWS/">
+	</car:civic>
+
+	<!-- <foaf:Person rdf:about="http://localhost/tubesWS/">
 
 		<foaf:name>Honda_Civic</foaf:name>
 		<dbo:manufacturer xml:lang="en">Honda</dbo:manufacturer>
@@ -50,6 +84,6 @@
 			</foaf:Project>
 		</owl:extra>
 
-	</foaf:Person>
+	</foaf:Person> -->
 	
 </rdf:RDF>
