@@ -8,7 +8,6 @@ use LDAP\Result;
     \EasyRdf\RdfNamespace::set('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
     \EasyRdf\RdfNamespace::set('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
     \EasyRdf\RdfNamespace::set('owl', 'http://www.w3.org/2002/07/owl#');
-    \EasyRdf\RdfNamespace::set('dc', 'http://purl.org/dc/terms/');
     \EasyRdf\RdfNamespace::set('dbo', 'http://dbpedia.org/ontology/');
     \EasyRdf\RdfNamespace::set('dbp', 'http://dbpedia.org/property/');
     \EasyRdf\RdfNamespace::set('car', 'http://example.org/schema/car/');
@@ -38,7 +37,7 @@ use LDAP\Result;
         ];
         break;
     }
-    
+
     //---------Inisialisasi arah sparql untuk map ---
     $query_dbpedia_map = "
         Select * WHERE {
@@ -63,28 +62,24 @@ use LDAP\Result;
     $data = \EasyRdf\Graph::newAndLoad($uri_rdf);
     $doc = $data->primaryTopic();
 
-    // ambil data dbpedia Honda civic dari civic.rdf
+    //---------Mengambil data dbpedia Honda civic dari civic.rdf
     $slash_uri = '';
     foreach ($doc->all('owl:sameAs') as $akun) {
         $slash_uri = $akun->get('foaf:homepage');
         break;
     }
-    
-    // set sparql endpoint
-    // $sparql_endpoint = 'https://dbpedia.org/sparql';
-    $sparql = new \EasyRdf\Sparql\Client($sparql_endpoint);
 
+    $sparql = new \EasyRdf\Sparql\Client($sparql_endpoint);
     $sparql_query = '
       SELECT distinct * WHERE {
            <' . $slash_uri . '> dbo:manufacturer ?manufacturer ;
                rdfs:comment ?info ;
                dbo:productionStartYear ?production ;
                foaf:isPrimaryTopicOf ?wiki .
-           ?manufacturer rdfs:label ?manufacturer_label.
-          FILTER (lang(?info) = "en" && lang(?manufacturer_label) = "en")
+               ?manufacturer rdfs:label ?manufacturer_label.
+            FILTER (lang(?info) = "en" && lang(?manufacturer_label) = "en")
       }
     ';
-
     $result = $sparql->query($sparql_query);
 
     // ambil detail civic dari $result sparql
@@ -96,7 +91,6 @@ use LDAP\Result;
         'info'=>$row->info,
         'wiki'=> $row->wiki,
       ];
-
       break;
     }
 ?>
@@ -135,12 +129,12 @@ use LDAP\Result;
         // Chart
         function drawStuff() {
             var data = new google.visualization.arrayToDataTable([
-            ['Year', 'Sales'],
-            ["2018",<?= $doc->get('sale:year18') ?>],
-            ["2019",<?= $doc->get('sale:year19') ?>],
-            ["2020",<?= $doc->get('sale:year20') ?>],
-            ["2021",<?= $doc->get('sale:year21') ?>],
-            ['2022',<?= $doc->get('sale:year22') ?>]
+                ['Year', 'Sales'],
+                ["2018",<?= $doc->get('sale:year18') ?>],
+                ["2019",<?= $doc->get('sale:year19') ?>],
+                ["2020",<?= $doc->get('sale:year20') ?>],
+                ["2021",<?= $doc->get('sale:year21') ?>],
+                ['2022',<?= $doc->get('sale:year22') ?>]
             ]);
 
             var options = {
@@ -201,13 +195,13 @@ use LDAP\Result;
                 <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
                     <!--Mengambil gambar dari wiki-->
                          <?php
-                        \EasyRdf\RdfNamespace::setDefault('og');
-                        $wiki = \EasyRdf\Graph::newAndLoad($detail['wiki']);
-                        $foto_url = $wiki->image;
+                            \EasyRdf\RdfNamespace::setDefault('og');
+                            $wiki = \EasyRdf\Graph::newAndLoad($detail['wiki']);
+                            $foto_url = $wiki->image;
                         ?>
 
-                        <div class="col-xl-7 col-lg-6"><img class="img-fluid mb-3 mb-lg-0"
-                        src="<?= $foto_url ?>" width="800" alt="..."/>
+                        <div class="col-xl-7 col-lg-6">
+                            <img class="img-fluid mb-3 mb-lg-0" src="<?= $foto_url ?>" width="800" alt="..."/>
                         </div>
                     <!----end---->
                     <div class="col-xl-5 col-lg-6">
@@ -243,11 +237,12 @@ use LDAP\Result;
                 <!---The Reall OGP untuk mengambil title deskripsi dan gambar serta link dari website lain--->
                 <div class="row gx-0 mb-4 mb-lg-5 align-items-center">           
                     <?php
-                    \EasyRdf\RdfNamespace::setDefault('og');
-                    $project_url = '';
-                    foreach ($doc->all('car:extra') as $akun) {
-                    $project_url = $akun->get('foaf:homepage');
-                    $ogp = \EasyRdf\Graph::newAndLoad($project_url);
+                        \EasyRdf\RdfNamespace::setDefault('og');
+                        $project_url = '';
+                        
+                        foreach ($doc->all('car:extra') as $akun) {
+                        $project_url = $akun->get('foaf:homepage');
+                        $ogp = \EasyRdf\Graph::newAndLoad($project_url);
                     ?>
 
                     <!--content--->
