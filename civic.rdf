@@ -3,13 +3,8 @@
 <rdf:RDF
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-	xmlns:dbp="http://dbpedia.org/property/"
 	xmlns:foaf="http://xmlns.com/foaf/0.1/"
-	xmlns:dc="http://purl.org/dc/terms/"
-	xmlns:dbo="http://dbpedia.org/ontology/"
 	xmlns:owl="http://www.w3.org/2002/07/owl#"
-	xmlns:gold="http://purl.org/linguistics/gold/"
-	xmlns:prov="http://www.w3.org/ns/prov#" 
 	xmlns:sale="http://example.org/schema/sale/"
 	xmlns:car="http://example.org/schema/car/">
 
@@ -20,8 +15,7 @@
 	</foaf:PersonalProfileDocument>
 
 	<car:civic rdf:about="http://localhost/tubesWS/">
-
-		<car:name>Honda_Civic</car:name>
+		<car:name>Honda Civic</car:name>
 		<car:manufacturer xml:lang="en">Honda</car:manufacturer>
 		<car:productionStartYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">1972-01-01</car:productionStartYear>
 		<car:designer xml:lang="en">Yuki Ishii and Hitomaro Asano</car:designer>
@@ -50,40 +44,5 @@
 				<foaf:homepage rdf:resource="https://www.youtube.com/watch?v=hBGLMDnjuaI"/>
 			</car:about>
 		</car:extra>
-	
 	</car:civic>
-
-	<!-- <foaf:Person rdf:about="http://localhost/tubesWS/">
-
-		<foaf:name>Honda_Civic</foaf:name>
-		<dbo:manufacturer xml:lang="en">Honda</dbo:manufacturer>
-		<dbo:productionStartYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">1972-01-01</dbo:productionStartYear>
-		<dbp:designer xml:lang="en">Yuki Ishii and Hitomaro Asano</dbp:designer>
-		<dbp:assembly xml:lang="en">Suzuka, Mie, Japan</dbp:assembly>
-		<sale:year18 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">325760</sale:year18>
-		<sale:year19 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">325650</sale:year19>
-		<sale:year20 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">261225</sale:year20>
-		<sale:year21 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">263787</sale:year21>
-		<sale:year22 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">119023</sale:year22>
-
-		<owl:sameAs>
-		<foaf:Person rdf:about="http://dbpedia.org/resource/Honda_Civic">
-			<rdfs:label>Honda_Civic</rdfs:label>
-			<foaf:homepage rdf:resource="http://dbpedia.org/resource/Honda_Civic"/>
-		</foaf:Person>
-		</owl:sameAs>
-
-		<owl:extra>
-			<foaf:Project rdf:about="http://dbpedia.org/page/Rock_Prophecies">
-				<foaf:homepage rdf:resource="https://global.honda/"/>
-				<foaf:name>Rock Prophecies</foaf:name>
-			</foaf:Project>
-			<foaf:Project rdf:about="http://dbpedia.org/page/The_Distortion_of_Sound">
-				<foaf:homepage rdf:resource="https://www.youtube.com/watch?v=hBGLMDnjuaI"/>
-				<foaf:name>The Distortion of Sound</foaf:name>
-			</foaf:Project>
-		</owl:extra>
-
-	</foaf:Person> -->
-	
 </rdf:RDF>
