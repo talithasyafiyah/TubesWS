@@ -18,46 +18,26 @@ use LDAP\Result;
     //---------Inisialisasi arah sparql untuk data dari dbpedia ---
     $sparql_endpoint = 'https://dbpedia.org/sparql';
     $sparql_dbpedia = new \EasyRdf\Sparql\Client($sparql_endpoint);
+    //query dbpedia
+    $query_dbpedia = "
+        Select * WHERE {
+            ?civic  rdfs:label 'Honda Civic'@en.
+            ?civic dbo:abstract ?abstract.
+            ?civic dbo:thumbnail ?image.
+            FILTER( LANG (?abstract) = 'en')
+        }";
 
-     //---------Mengkoneksikan dengan civic.rdf di folder local ---
-     $uri_rdf = 'http://localhost/tubesWS/civic.rdf';
-     $data = \EasyRdf\Graph::newAndLoad($uri_rdf);
-     $doc = $data->primaryTopic();
- 
-     //---------Mengambil data dbpedia Honda civic dari civic.rdf
-     $civic_uri = '';
-     foreach ($doc->all('owl:sameAs') as $akun) {
-         $civic_uri = $akun->get('car:homepage');
-         break;
-     }
- 
-    //query mencari data civic dari dbpedia melalui link homepage pada file rdf local
-     $sparql = new \EasyRdf\Sparql\Client($sparql_endpoint);
-     $civic_query = '
-       SELECT distinct * WHERE {
-            <' . $civic_uri . '> dbo:manufacturer ?manufacturer ;
-                dbo:abstract ?abstract ;
-                dbp:designer ?designer;
-                foaf:isPrimaryTopicOf ?wiki .
-                ?manufacturer rdfs:label ?manufacturer_label.
-             FILTER (lang(?abstract) = "en")
-       }
-     ';
-     $result = $sparql->query($civic_query);
- 
-     // ambil detail civic dari $result sparql
-     $detail = [];
-     foreach ($result as $row) {
-       $detail = [
-         'manufacturerlink'=>$row->manufacturer,
-         'designer'=>$row->designer,
-         'manufacturer'=>$row->manufacturer_label,
-         'wiki'=> $row->wiki,
-         'abstract'=>$row->abstract,
-       ];
-       break;
-     }
-    
+    $result_dbpedia = $sparql_dbpedia->query($query_dbpedia);
+    //menyimpan hasil query ke dalam array dbpedia
+    $dbpedia = [];
+    foreach ( $result_dbpedia as $row ) { 
+        $dbpedia = [
+        'abstract' => $row->abstract, //abstract civic
+        'image' => $row->image,
+        ];
+        break;
+    }
+
     //---------Inisialisasi arah sparql untuk map ---
     $query_dbpedia_map = "
         Select * WHERE {
@@ -77,6 +57,42 @@ use LDAP\Result;
         break;
     }
 
+    //---------Mengkoneksikan dengan civic.rdf di folder local ---
+    $uri_rdf = 'http://localhost/tubesWS/civic.rdf';
+    $data = \EasyRdf\Graph::newAndLoad($uri_rdf);
+    $doc = $data->primaryTopic();
+
+    //---------Mengambil data dbpedia Honda civic dari civic.rdf
+    $slash_uri = '';
+    foreach ($doc->all('owl:sameAs') as $akun) {
+        $slash_uri = $akun->get('foaf:homepage');
+        break;
+    }
+
+    $sparql = new \EasyRdf\Sparql\Client($sparql_endpoint);
+    $sparql_query = '
+      SELECT distinct * WHERE {
+           <' . $slash_uri . '> dbo:manufacturer ?manufacturer ;
+               rdfs:comment ?info ;
+               dbo:productionStartYear ?production ;
+               foaf:isPrimaryTopicOf ?wiki .
+               ?manufacturer rdfs:label ?manufacturer_label.
+            FILTER (lang(?info) = "en" && lang(?manufacturer_label) = "en")
+      }
+    ';
+    $result = $sparql->query($sparql_query);
+
+    // ambil detail civic dari $result sparql
+    $detail = [];
+    foreach ($result as $row) {
+      $detail = [
+        'manufacturer'=>$row->manufacturer_label,
+        'production'=>$row->production,
+        'info'=>$row->info,
+        'wiki'=> $row->wiki,
+      ];
+      break;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -105,7 +121,6 @@ use LDAP\Result;
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
-        <!--- link google chart API---->
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script type="text/javascript">
         google.charts.load('current', {'packages':['bar']});
@@ -157,7 +172,7 @@ use LDAP\Result;
                 </div>
             </div>
         </header>
-        <!-- abstract -->
+        <!-- About-->
         <section class="about-section text-center" id="about">
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
@@ -166,19 +181,19 @@ use LDAP\Result;
                             <?= $doc->get('car:name') ?>
                         </h2>
                         <p class="text-white-50">
-                            <?= $detail['abstract'];?>
+                            <?= $dbpedia['abstract'];?>
                         </p>
                     </div>
                 </div>
                 <img class="img-fluid" src="assets/img/ipad-car.png" alt="..." />
             </div>
         </section>
-       <!-- Section 2--->
+        <!-- Projects-->
         <section class="projects-section bg-light" id="projects">
             <div class="container px-4 px-lg-5">
-                 <!-- Gambar dan About-->
+                <!-- Open Graph Protocol -->
                 <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
-                 <!--OGP Mengambil gambar dari wiki-->
+                    <!--Mengambil gambar dari wiki-->
                          <?php
                             \EasyRdf\RdfNamespace::setDefault('og');
                             $wiki = \EasyRdf\Graph::newAndLoad($detail['wiki']);
@@ -188,15 +203,16 @@ use LDAP\Result;
                         <div class="col-xl-7 col-lg-6">
                             <img class="img-fluid mb-3 mb-lg-0" src="<?= $foto_url ?>" width="800" alt="..."/>
                         </div>
-                 <!----About---->
+                    <!----end---->
                     <div class="col-xl-5 col-lg-6">
                         <div class="featured-text text-lg-left">
+                            <!-- <h4>Shoreline</h4> -->
                             <p class="text-black-50 mb-2" style="font-size: xx-large;">About <?= $doc->get('car:name') ?></p>
                             <table>
                                 <tr>
                                     <td>Designer</td>
                                     <td>:</td>
-                                    <td><?= $detail['designer'] ?></td>
+                                    <td><?= $doc->get('car:designer') ?></td>
                                 </tr>
                                 <tr>
                                     <td>First Production</td>
@@ -206,9 +222,7 @@ use LDAP\Result;
                                 <tr>
                                     <td>Manufacturer</td>
                                     <td>:</td>
-                                    <td> <a href="<?= $detail['manufacturerlink'] ?>" target="_blank">
-                                         <?= $detail['manufacturer'] ?> </a>
-                                    </td>
+                                    <td><?= $doc->get('car:manufacturer') ?></td>
                                 </tr>
                                 <tr>
                                     <td>First Assembly</td>
@@ -220,40 +234,36 @@ use LDAP\Result;
                     </div>
                 </div>
 
-                <!---OGP untuk mengambil title deskripsi dan gambar serta link dari website lain--->
+                <!---The Reall OGP untuk mengambil title deskripsi dan gambar serta link dari website lain--->
                 <div class="row gx-0 mb-4 mb-lg-5 align-items-center">           
                     <?php
                         \EasyRdf\RdfNamespace::setDefault('og');
                         $project_url = '';
                         
-                        foreach ($doc->all('car:alltype') as $akun) {
-                        $project_url = $akun->get('car:homepage');
-                        $trailer = $akun->get('car:trailer');
+                        foreach ($doc->all('car:extra') as $akun) {
+                        $project_url = $akun->get('foaf:homepage');
                         $ogp = \EasyRdf\Graph::newAndLoad($project_url);
                     ?>
 
-                    <!--ogp content--->
-                    <div class="col-xl-6 col-lg-4">
+                    <!--content--->
+                    <div class="col-xl-5 col-lg-6">
                         <div class="featured-text text-lg-left px-4">
                             <h4><?= $ogp->title ?></h4>
                             <p><?= $ogp->description; ?></p>
                             <p>Sumber: <a href="<?= $ogp->url ?>" target="_blank"><?= $ogp->site_name ?></a></p>
                         </div>
                     </div>
-                    <div class="col-xl-6 col-lg-5">
-                        <iframe src="<?=  $trailer ?>" 
-                        title="YouTube video player"  width="100%" height="300px" frameborder="0" allow="accelerometer; autoplay; 
-                        clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-                        </iframe>
+                    <div class="col-xl-7 col-lg-6">
+                        <img src="<?= $ogp->image ?>" width="100%"/>
                     </div>
-                    <!---end content--->
-
                     
+                    <!---end--->
 
                     <?php } ?>
                 </div>
             
-                <!--Section Map--->
+                <!---end---->
+                <!-- Project One Row-->
                 <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
                     <div class="col-lg-6">
                         <!-- Map -->
@@ -282,7 +292,7 @@ use LDAP\Result;
                         </div>
                     </div>
                 </div>
-                <!-- Chart -->
+                <!-- Project Two Row-->
                 <div class="row gx-0 justify-content-center">
                     <div class="col-lg-6">
                         <div class="card mx-4 mt-4">
@@ -301,11 +311,9 @@ use LDAP\Result;
                         </div>
                     </div>
                 </div>
-                
             </div>
+           </div>
         </section>
-
-
         <!-- Members-->
         <section class="contact-section bg-black">
             <div class="container px-4 px-lg-5">

@@ -15,15 +15,16 @@
 	</foaf:PersonalProfileDocument>
 
 	<car:civic rdf:about="http://localhost/tubesWS/">
-
 		<car:name>Honda Civic</car:name>
+		<car:manufacturer xml:lang="en">Honda</car:manufacturer>
 		<car:productionStartYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">1972-01-01</car:productionStartYear>
+		<car:designer xml:lang="en">Yuki Ishii and Hitomaro Asano</car:designer>
 		<car:assembly xml:lang="en">Suzuka, Mie, Japan</car:assembly>
 		
 		<owl:sameAs>
 		<car:civic rdf:about="http://dbpedia.org/resource/Honda_Civic">
 			<rdfs:label>Honda_Civic</rdfs:label>
-			<car:homepage rdf:resource="http://dbpedia.org/resource/Honda_Civic"/>
+			<foaf:homepage rdf:resource="http://dbpedia.org/resource/Honda_Civic"/>
 		</car:civic>
 		</owl:sameAs>
 
@@ -33,34 +34,15 @@
 		<sale:year21 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">263787</sale:year21>
 		<sale:year22 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">119023</sale:year22>
 
-		<car:alltype>
-			<car:type rdf:about="https://dbpedia.org/page/Honda_Civic_Type_R">
-				<car:name>Honda Civic Type R</car:name>
-				<car:homepage rdf:resource="https://www.youtube.com/watch?v=08G7yN_n9hk"/>
-				<car:trailer rdf:resource="https://www.youtube.com/embed/08G7yN_n9hk"/>		
-			</car:type>
-			<car:type rdf:about="https://dbpedia.org/page/Sedan_(automobile)">
-				<car:name>Honda Civic Sedan </car:name>
-				<car:homepage rdf:resource="https://www.youtube.com/watch?v=bisbGguPwds"/>
-				<car:trailer rdf:resource="https://www.youtube.com/embed/bisbGguPwds"/>	
-			</car:type>
-			<car:type rdf:about="https://dbpedia.org/page/Hatchback">
-				<car:name>Honda Civic Hactback RS </car:name>
-				<car:homepage rdf:resource="https://www.youtube.com/watch?v=YYuPKFvg1qQ"/>
-				<car:trailer rdf:resource="https://www.youtube.com/embed/YYuPKFvg1qQ"/>	
-			</car:type>
-		</car:alltype>
-
+		<car:extra>
+			<car:about rdf:about="https://dbpedia.org/page/Honda">
+				<car:title>Honda</car:title>
+				<foaf:homepage rdf:resource="https://global.honda/"/>		
+			</car:about>
+			<car:about rdf:about="http://dbpedia.org/page/Youtube">
+				<car:title>Trailer</car:title>
+				<foaf:homepage rdf:resource="https://www.youtube.com/watch?v=hBGLMDnjuaI"/>
+			</car:about>
+		</car:extra>
 	</car:civic>
-
 </rdf:RDF>
-
-<!-- 
-		<car:type rdf:about="https://dbpedia.org/page/Honda">
-				<car:name>Honda</car:name>
-				<car:homepage rdf:resource="https://global.honda/"/>		
-			</car:type>
-			<car:type rdf:about="http://dbpedia.org/page/Youtube">
-				<car:name>Trailer</car:name>
-				<car:homepage rdf:resource="https://www.youtube.com/watch?v=hBGLMDnjuaI"/>
-			</car:type> -->
