@@ -14,7 +14,7 @@
 		<foaf:primaryTopic rdf:resource="http://localhost/tubesWS/"/>
 	</foaf:PersonalProfileDocument>
 
-	<car:civic rdf:about="http://localhost/tubesWS/">
+	<rdf:description rdf:about="http://localhost/tubesWS/">
 
 		<car:name>Honda Civic</car:name>
 		<car:productionStartYear rdf:datatype="http://www.w3.org/2001/XMLSchema#gYear">1972-01-01</car:productionStartYear>
@@ -51,7 +51,7 @@
 			</car:type>
 		</car:alltype>
 
-	</car:civic>
+	</rdf:description>
 
 </rdf:RDF>
 
